@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Stock Movements - Shop Inventory{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Stock Movements</h3>
+    <a href="{% url 'inventory:movement_create' %}" class="btn btn-dark">+ Record Movement</a>
+</div>
+
+<div class="card p-3">
+    <table class="table table-sm mb-0">
+        <thead><tr><th>Item</th><th>Type</th><th>Qty</th><th>Note</th><th>By</th><th>When</th></tr></thead>
+        <tbody>
+        {% for m in movements %}
+            <tr>
+                <td><a href="{% url 'inventory:item_detail' m.item.pk %}">{{ m.item.name }}</a></td>
+                <td><span class="badge {% if m.movement_type == 'IN' %}bg-success{% else %}bg-secondary{% endif %}">{{ m.get_movement_type_display }}</span></td>
+                <td>{{ m.quantity }}</td>
+                <td>{{ m.note|default:"—" }}</td>
+                <td>{{ m.recorded_by|default:"—" }}</td>
+                <td>{{ m.timestamp|date:"d M Y, H:i" }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6" class="text-muted text-center py-3">No movements recorded yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

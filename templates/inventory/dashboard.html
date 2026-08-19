@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Shop Inventory{% endblock %}
+{% block content %}
+<h3 class="mb-4">Dashboard</h3>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card p-3">
+            <div class="text-muted small">Total Items</div>
+            <div class="fs-3 fw-bold">{{ total_items }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3">
+            <div class="text-muted small">Total Stock Value</div>
+            <div class="fs-3 fw-bold">₦{{ total_stock_value|floatformat:2 }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 {% if low_stock_count > 0 %}border-warning{% endif %}">
+            <div class="text-muted small">Low Stock Alerts</div>
+            <div class="fs-3 fw-bold {% if low_stock_count > 0 %}text-warning{% endif %}">{{ low_stock_count }}</div>
+        </div>
+    </div>
+</div>
+
+{% if low_stock_items %}
+<div class="card p-3 mb-4">
+    <h5 class="mb-3">⚠️ Low Stock Items</h5>
+    <table class="table table-sm mb-0">
+        <thead><tr><th>Item</th><th>SKU</th><th>Quantity</th><th>Reorder Level</th><th></th></tr></thead>
+        <tbody>
+        {% for item in low_stock_items %}
+            <tr class="low-stock-row">
+                <td>{{ item.name }}</td>
+                <td>{{ item.sku }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.reorder_level }}</td>
+                <td><a href="{% url 'inventory:movement_create' %}?item={{ item.pk }}" class="btn btn-sm btn-outline-dark">Restock</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<div class="card p-3">
+    <h5 class="mb-3">Recent Stock Movements</h5>
+    {% if recent_movements %}
+    <table class="table table-sm mb-0">
+        <thead><tr><th>Item</th><th>Type</th><th>Qty</th><th>By</th><th>When</th></tr></thead>
+        <tbody>
+        {% for m in recent_movements %}
+            <tr>
+                <td>{{ m.item.name }}</td>
+                <td>
+                    <span class="badge {% if m.movement_type == 'IN' %}bg-success{% else %}bg-secondary{% endif %}">
+                        {{ m.get_movement_type_display }}
+                    </span>
+                </td>
+                <td>{{ m.quantity }}</td>
+                <td>{{ m.recorded_by|default:"—" }}</td>
+                <td>{{ m.timestamp|date:"d M Y, H:i" }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="text-muted mb-0">No stock movements recorded yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Add Category - Shop Inventory{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card p-4">
+            <h4 class="mb-3">Add Category</h4>
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-dark w-100">Save</button>
+            </form>
+            <a href="{% url 'inventory:item_create' %}" class="small mt-2 d-block text-center">← Back to add item</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
