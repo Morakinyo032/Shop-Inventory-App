@@ -1,30 +1,44 @@
 {% extends "base.html" %}
 {% block title %}{{ item.name }} - Shop Inventory{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-start mb-3">
-    <div>
-        <h3 class="mb-1">{{ item.name }} {% if item.is_low_stock %}<span class="badge bg-warning text-dark">Low Stock</span>{% endif %}</h3>
-        <div class="text-muted">SKU: {{ item.sku }}{% if item.category %} · {{ item.category }}{% endif %}</div>
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        {% if item.photo %}
+            <img src="{{ item.photo.url }}" alt="{{ item.name }}" class="item-photo-hero">
+        {% else %}
+            <div class="item-photo-hero-placeholder">📦</div>
+        {% endif %}
     </div>
-    <div>
-        <a href="{% url 'inventory:movement_create' %}?item={{ item.pk }}" class="btn btn-dark">Record Movement</a>
-        <a href="{% url 'inventory:item_update' item.pk %}" class="btn btn-outline-secondary">Edit</a>
-        <a href="{% url 'inventory:item_delete' item.pk %}" class="btn btn-outline-danger">Delete</a>
-    </div>
-</div>
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+            <div>
+                <h3 class="mb-1">{{ item.name }} {% if item.is_low_stock %}<span class="low-stock-badge">Low Stock</span>{% endif %}</h3>
+                <div class="text-muted">SKU: {{ item.sku }}{% if item.category %} · {{ item.category }}{% endif %}{% if item.supplier %} · Supplier: {{ item.supplier }}{% endif %}</div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'inventory:movement_create' %}?item={{ item.pk }}" class="btn btn-brand">Record Movement</a>
+                <a href="{% url 'inventory:item_update' item.pk %}" class="btn btn-outline-secondary">Edit</a>
+                <a href="{% url 'inventory:item_delete' item.pk %}" class="btn btn-outline-danger">Delete</a>
+            </div>
+        </div>
 
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card p-3"><div class="text-muted small">Quantity</div><div class="fs-4 fw-bold">{{ item.quantity }}</div></div>
-    </div>
-    <div class="col-md-3">
-        <div class="card p-3"><div class="text-muted small">Reorder Level</div><div class="fs-4 fw-bold">{{ item.reorder_level }}</div></div>
-    </div>
-    <div class="col-md-3">
-        <div class="card p-3"><div class="text-muted small">Unit Price</div><div class="fs-4 fw-bold">₦{{ item.unit_price|floatformat:2 }}</div></div>
-    </div>
-    <div class="col-md-3">
-        <div class="card p-3"><div class="text-muted small">Stock Value</div><div class="fs-4 fw-bold">₦{{ item.stock_value|floatformat:2 }}</div></div>
+        <div class="row g-3 mt-1">
+            <div class="col-6 col-md-3">
+                <div class="stat-card {% if item.is_low_stock %}warning-card{% else %}brand-card{% endif %}">
+                    <div class="stat-label">Quantity</div>
+                    <div class="stat-value">{{ item.quantity }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card stat-card"><div class="stat-label">Reorder Level</div><div class="stat-value">{{ item.reorder_level }}</div></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card stat-card"><div class="stat-label">Unit Price</div><div class="stat-value">₦{{ item.unit_price|floatformat:2 }}</div></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card stat-card"><div class="stat-label">Stock Value</div><div class="stat-value">₦{{ item.stock_value|floatformat:2 }}</div></div>
+            </div>
+        </div>
     </div>
 </div>
 

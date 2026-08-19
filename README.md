@@ -6,7 +6,8 @@ low until it's already out.
 
 ## Features
 
-- **Items** — track name, SKU, category, quantity, reorder level, unit price, supplier
+- **Items** — track name, SKU, category, quantity, reorder level, unit price,
+  supplier, and an optional product photo
 - **Stock movements** — record Stock In / Stock Out with an audit trail (who, when, why)
 - **Low-stock alerts** — dashboard warnings + automatic email when quantity drops
   to or below an item's reorder level
@@ -90,8 +91,10 @@ handy for testing without SMTP setup.
    python manage.py createsuperuser
    python manage.py collectstatic
    ```
-8. In the **Web** tab, add a static files mapping: URL `/static/` → Directory
-   `/home/yourusername/shopinventory/staticfiles`.
+8. In the **Web** tab, add static/media file mappings:
+   - URL `/static/` → Directory `/home/yourusername/shopinventory/staticfiles`
+   - URL `/media/` → Directory `/home/yourusername/shopinventory/media`
+   (The second mapping is required for uploaded product photos to display.)
 9. Reload the web app.
 
 ## Demo flow (for the 2–3 min demo video)

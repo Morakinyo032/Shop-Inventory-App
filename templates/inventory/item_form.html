@@ -8,17 +8,27 @@
                 <h4 class="mb-0">{{ title }}</h4>
                 <a href="{% url 'inventory:category_create' %}" class="small">+ Add category</a>
             </div>
-            <form method="post">
+
+            {% if form.instance.photo %}
+                <div class="mb-3 text-center">
+                    <img src="{{ form.instance.photo.url }}" alt="Current photo" style="max-height:140px; border-radius:10px;">
+                </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for field in form %}
                     <div class="mb-3">
                         <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
                         {{ field }}
+                        {% if field.name == "photo" %}
+                            <div class="form-text">Optional. JPG or PNG works best.</div>
+                        {% endif %}
                         {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
                         {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
                     </div>
                 {% endfor %}
-                <button type="submit" class="btn btn-dark w-100">Save</button>
+                <button type="submit" class="btn btn-brand w-100">Save</button>
             </form>
         </div>
     </div>

@@ -9,5 +9,6 @@ venv/
 *.egg-info/
 staticfiles/
 media/
+
 .DS_Store
 *.log

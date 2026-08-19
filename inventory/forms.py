@@ -5,7 +5,7 @@ from .models import Item, StockMovement, Category
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = ["name", "sku", "category", "quantity", "reorder_level", "unit_price", "supplier"]
+        fields = ["name", "sku", "category", "quantity", "reorder_level", "unit_price", "supplier", "photo"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "sku": forms.TextInput(attrs={"class": "form-control"}),
@@ -14,6 +14,7 @@ class ItemForm(forms.ModelForm):
             "reorder_level": forms.NumberInput(attrs={"class": "form-control"}),
             "unit_price": forms.NumberInput(attrs={"class": "form-control", "step": "0.01"}),
             "supplier": forms.TextInput(attrs={"class": "form-control"}),
+            "photo": forms.ClearableFileInput(attrs={"class": "form-control"}),
         }
 
 

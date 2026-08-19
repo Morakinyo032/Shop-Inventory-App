@@ -5,21 +5,21 @@
 
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card p-3">
-            <div class="text-muted small">Total Items</div>
-            <div class="fs-3 fw-bold">{{ total_items }}</div>
+        <div class="card stat-card">
+            <div class="stat-label">Total Items</div>
+            <div class="stat-value">{{ total_items }}</div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card p-3">
-            <div class="text-muted small">Total Stock Value</div>
-            <div class="fs-3 fw-bold">₦{{ total_stock_value|floatformat:2 }}</div>
+        <div class="stat-card brand-card">
+            <div class="stat-label">Total Stock Value</div>
+            <div class="stat-value">₦{{ total_stock_value|floatformat:2 }}</div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card p-3 {% if low_stock_count > 0 %}border-warning{% endif %}">
-            <div class="text-muted small">Low Stock Alerts</div>
-            <div class="fs-3 fw-bold {% if low_stock_count > 0 %}text-warning{% endif %}">{{ low_stock_count }}</div>
+        <div class="stat-card {% if low_stock_count > 0 %}warning-card{% endif %}">
+            <div class="stat-label">Low Stock Alerts</div>
+            <div class="stat-value">{{ low_stock_count }}</div>
         </div>
     </div>
 </div>
@@ -27,16 +27,23 @@
 {% if low_stock_items %}
 <div class="card p-3 mb-4">
     <h5 class="mb-3">⚠️ Low Stock Items</h5>
-    <table class="table table-sm mb-0">
-        <thead><tr><th>Item</th><th>SKU</th><th>Quantity</th><th>Reorder Level</th><th></th></tr></thead>
+    <table class="table table-sm mb-0 align-middle">
+        <thead><tr><th></th><th>Item</th><th>SKU</th><th>Quantity</th><th>Reorder Level</th><th></th></tr></thead>
         <tbody>
         {% for item in low_stock_items %}
             <tr class="low-stock-row">
+                <td>
+                    {% if item.photo %}
+                        <img src="{{ item.photo.url }}" class="table-thumb" alt="{{ item.name }}">
+                    {% else %}
+                        <div class="table-thumb-placeholder">📦</div>
+                    {% endif %}
+                </td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.sku }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>{{ item.reorder_level }}</td>
-                <td><a href="{% url 'inventory:movement_create' %}?item={{ item.pk }}" class="btn btn-sm btn-outline-dark">Restock</a></td>
+                <td><a href="{% url 'inventory:movement_create' %}?item={{ item.pk }}" class="btn btn-sm btn-outline-brand">Restock</a></td>
             </tr>
         {% endfor %}
         </tbody>
