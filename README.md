@@ -57,9 +57,6 @@ defaults are used in DEBUG mode):
 | `DJANGO_DEFAULT_FROM_EMAIL` | From address | `you@gmail.com` |
 | `DJANGO_ADMINS` | Who receives low-stock alerts, `Name:email` pairs comma-separated | `Owner:owner@example.com,Manager:mgr@example.com` |
 
-In development, `DJANGO_EMAIL_BACKEND` defaults to the console backend, so
-low-stock emails just print to your terminal instead of actually sending —
-handy for testing without SMTP setup.
 
 ## Project structure
 
