@@ -9,28 +9,99 @@
                 <a href="{% url 'inventory:category_create' %}" class="small">+ Add category</a>
             </div>
 
-            {% if form.instance.photo %}
-                <div class="mb-3 text-center">
-                    <img src="{{ form.instance.photo.url }}" alt="Current photo" style="max-height:140px; border-radius:10px;">
-                </div>
-            {% endif %}
-
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for field in form %}
-                    <div class="mb-3">
-                        <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
-                        {{ field }}
-                        {% if field.name == "photo" %}
-                            <div class="form-text">Optional. JPG or PNG works best.</div>
-                        {% endif %}
-                        {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
-                        {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
-                    </div>
+                    {% if field.name == "photo" %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}</label>
+
+                            <div id="photoDropZone" class="border rounded p-3 text-center mb-2" style="border-style: dashed !important; cursor: pointer; background: var(--brand-light);">
+                                <img id="photoPreview"
+                                     src="{% if form.instance.photo %}{{ form.instance.photo.url }}{% endif %}"
+                                     style="max-height:140px; border-radius:10px; {% if not form.instance.photo %}display:none;{% endif %}"
+                                     alt="Preview">
+                                <div id="photoDropText" {% if form.instance.photo %}style="display:none;"{% endif %}>
+                                    <div style="font-size:1.8rem;">📋</div>
+                                    <div class="fw-semibold">Click here, then paste (Ctrl+V) an image</div>
+                                    <div class="text-muted small">or use the file picker below</div>
+                                </div>
+                            </div>
+
+                            {{ field }}
+                            <div class="form-text">Optional. JPG or PNG works best. Copy an image anywhere, click the box above, and press Ctrl+V.</div>
+                            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                    {% endif %}
                 {% endfor %}
                 <button type="submit" class="btn btn-brand w-100">Save</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+(function () {
+    const dropZone = document.getElementById('photoDropZone');
+    const preview = document.getElementById('photoPreview');
+    const dropText = document.getElementById('photoDropText');
+    const fileInput = document.querySelector('input[type="file"][name="photo"]');
+    if (!dropZone || !fileInput) return;
+
+    dropZone.setAttribute('tabindex', '0');
+
+    function showFile(file) {
+        if (!file || !file.type.startsWith('image/')) return;
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+            preview.style.display = 'inline-block';
+            dropText.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    dropZone.addEventListener('click', () => dropZone.focus());
+
+    dropZone.addEventListener('paste', (e) => {
+        const items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        for (const item of items) {
+            if (item.type.startsWith('image/')) {
+                showFile(item.getAsFile());
+                e.preventDefault();
+                break;
+            }
+        }
+    });
+
+    // Also allow drag-and-drop onto the same zone.
+    dropZone.addEventListener('dragover', (e) => e.preventDefault());
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (e.dataTransfer.files && e.dataTransfer.files.length) {
+            showFile(e.dataTransfer.files[0]);
+        }
+    });
+
+    // Keep the preview in sync if someone uses the plain file picker instead.
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files && fileInput.files[0]) {
+            showFile(fileInput.files[0]);
+        }
+    });
+})();
+</script>
 {% endblock %}
+
