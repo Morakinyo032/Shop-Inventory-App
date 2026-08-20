@@ -4,19 +4,25 @@
 <h3 class="mb-4">Dashboard</h3>
 
 <div class="row g-3 mb-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card stat-card">
-            <div class="stat-label">Total Items</div>
+            <div class="stat-label">Distinct Products</div>
             <div class="stat-value">{{ total_items }}</div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-label">Total Units in Stock</div>
+            <div class="stat-value">{{ total_units }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
         <div class="stat-card brand-card">
             <div class="stat-label">Total Stock Value</div>
             <div class="stat-value">₦{{ total_stock_value|floatformat:2 }}</div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="stat-card {% if low_stock_count > 0 %}warning-card{% endif %}">
             <div class="stat-label">Low Stock Alerts</div>
             <div class="stat-value">{{ low_stock_count }}</div>

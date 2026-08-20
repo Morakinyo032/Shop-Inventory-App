@@ -2,18 +2,21 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.cache import never_cache
 
 from .forms import CategoryForm, ItemForm, StockMovementForm
 from .models import Item, StockMovement
 
 
 @login_required
+@never_cache
 def dashboard(request):
     items = Item.objects.select_related("category").all()
     low_stock_items = [i for i in items if i.is_low_stock]
     recent_movements = StockMovement.objects.select_related("item", "recorded_by")[:10]
     context = {
         "total_items": items.count(),
+        "total_units": sum(i.quantity for i in items),
         "total_stock_value": sum(i.stock_value for i in items),
         "low_stock_items": low_stock_items,
         "low_stock_count": len(low_stock_items),
